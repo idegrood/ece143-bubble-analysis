@@ -292,6 +292,6 @@ if __name__ == "__main__":
     generate_all_bubble_csvs(
         config_path="bubble_config.json",
         output_dir="data",
-        start_date="2015-01-01",
+        start_date="1995-01-01",
     )
     print("\n[ALL DONE] Bubble datasets generated.")
