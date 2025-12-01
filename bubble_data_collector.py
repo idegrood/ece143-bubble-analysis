@@ -88,6 +88,7 @@ def build_bubble_panel(
     db: wrds.Connection | None = None,
     config: dict | None = None,
     start_date: str = "2015-01-01",
+    end_date: str | None = None,
 ) -> pd.DataFrame:
     """
     Build the merged CRSP + Compustat daily bubble dataset for a given bubble type.
@@ -146,19 +147,27 @@ def build_bubble_panel(
         columns=["gvkey", "lpermno", "linktype", "linkprim"],
     )
 
+ 
+
+
     link = link[
         (link["linktype"].isin(["LC", "LU"])) &
-        (link["linkprim"].isin(["P", "C"]))
+        (link["linkprim"].isin(["P", "C", "S"]))
     ][["gvkey", "lpermno"]].drop_duplicates().rename(columns={"lpermno": "permno"})
+
+   
 
     firm_list = firm_list.merge(link, on="gvkey", how="left")
     firm_list = firm_list.dropna(subset=["permno"]).copy()
     firm_list["permno"] = firm_list["permno"].astype(int)
 
     # 3) Curated filter (this is what really defines your universe)
+    name_pattern = "|".join([n.upper().replace(".", r"\.").replace(",", r"\,") for n in names])
+    print(tickers)
+    print(name_pattern)
     firm_list = firm_list[
         (firm_list["tic"].isin(tickers)) |
-        (firm_list["conm"].str.upper().isin(names))
+        (firm_list["conm"].str.upper().str.contains(name_pattern))
     ].drop_duplicates(subset=["permno"])
 
     if firm_list.empty:
@@ -166,6 +175,8 @@ def build_bubble_panel(
 
     print(f"\nFiltered {bubble_type} firms (curated):")
     print(firm_list)
+
+
 
     # 4) CRSP daily
     permnos = firm_list["permno"].tolist()
@@ -176,8 +187,11 @@ def build_bubble_panel(
         FROM crsp.dsf
         WHERE permno IN ({permnos_str})
           AND date >= '{start_date}'
-        ORDER BY permno, date;
     """
+    if end_date:
+      sql_crsp += f" AND date <= '{end_date}'"
+
+    sql_crsp += " ORDER BY permno, date;"
     crsp = db.raw_sql(sql_crsp)
     crsp["date"] = pd.to_datetime(crsp["date"])
     crsp["prc"] = crsp["prc"].abs()
@@ -256,6 +270,7 @@ def generate_all_bubble_csvs(
     config = load_bubble_config(config_path)
     db = wrds.Connection()
 
+
     os.makedirs(output_dir, exist_ok=True)
 
     for bubble_type, cfg in config.items():
@@ -271,11 +286,14 @@ def generate_all_bubble_csvs(
         print(f"\n[INFO] Building panel for bubble: {bubble_type}")
 
         try:
+            start_date = cfg.get("start_date", "2015-01-01")
+            end_date = cfg.get("end_date", None)
             merged = build_bubble_panel(
                 bubble_type=bubble_type,
                 db=db,
                 config=config,
                 start_date=start_date,
+                end_date=end_date
             )
             out_path = os.path.join(output_dir, f"{bubble_type}_merged.csv")
             merged.to_csv(out_path, index=False)
@@ -293,5 +311,8 @@ if __name__ == "__main__":
         config_path="bubble_config.json",
         output_dir="data",
         start_date="1995-01-01",
+  
+
+
     )
     print("\n[ALL DONE] Bubble datasets generated.")
