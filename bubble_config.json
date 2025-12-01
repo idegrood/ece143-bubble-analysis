@@ -55,7 +55,14 @@
       "ADOBE INC",
       "SALESFORCE INC",
       "SAP SE"
-    ]
+    ],
+
+   
+
+    "start_date": "2020-01-01",
+    "end_date": "2025-11-30"
+  
+
   },
 
   "crypto": {
@@ -92,23 +99,37 @@
       "ROBINHOOD MARKETS INC",
       "PAYPAL HOLDINGS INC",
       "BLOCK INC"
-    ]
+    ],
+    "start_date": "2016-01-01",
+    "end_date": "2018-12-31"
+
+
   },
 
   "ev": {
-    "keywords": [
-      "Tesla", "NIO", "BYD", "Li Auto", "Xpeng", "Lucid", "Rivian"
-    ],
+  "keywords": [
+    "Tesla", "NIO", "BYD", "Li Auto", "Xpeng", "Lucid", "Rivian", "Workhorse", "Fisker", "Canoo", "Lordstown", "Nikola", "XPeng", "Hyliion", "ChargePoint", "Blink Charging", "QuantumScape", "Proterra", "Lion Electric", "Arrival"
+  ],
 
-    "tickers": [
-      "TSLA","RIVN","LCID","FSR","NKLA","RIDE","WKHS",
-      "NIO","XPEV","LI","QS","CHPT","BLNK","PLUG","HYLN"
-    ],
+  "tickers": [
+    "TSLA","RIVN","LCID","FSR","NKLA","RIDE","WKHS",
+    "NIO","XPEV","LI","QS","CHPT","BLNK","PLUG","HYLN",
+    "ARVL","PTON","CANO","WORK","RDNT","KNDI","BYDDY"
+  ],
 
-    "names": [
-      "TESLA INC", "NIO INC", "BYD COMPANY LTD", "LI AUTO INC", "XPENG INC", "LUCID GROUP INC"
-    ]
+  "names": [
+    "TESLA INC", "NIO INC", "BYD COMPANY LTD", "LI AUTO INC", "XPENG INC",
+    "LUCID GROUP INC", "RIVIAN AUTOMOTIVE INC", "WORKHORSE GROUP INC",
+    "FISKER INC", "CANOO INC", "LORDSTOWN MOTORS CORP", "NIKOLA CORP",
+    "HYLIION HOLDINGS CORP", "CHARGEPOINT HOLDINGS INC", "BLINK CHARGING CO",
+    "QUANTUMSCAPE CORP", "PROTERRA INC", "LION ELECTRIC CO", "ARRIVAL LTD"
+  ],
+   "start_date": "2017-01-01",
+   "end_date": "2022-12-31"
+
+
   },
+
 
   "dotcom": {
     "keywords":[
@@ -229,6 +250,9 @@
     "Transmeta", "UUNET", "United Online (NetZero)", "Usinternetworking", 
     "Verio", "VerticalNet", "Vignette Corporation", "Webvan", "World Online", 
     "Yahoo!", "theGlobe.com", "uBid"
-  ]
+  ],
+  "start_date": "1998-01-01",
+  "end_date": "2000-03-31"
+
   }
 }
