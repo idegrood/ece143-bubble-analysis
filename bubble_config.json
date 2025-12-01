@@ -56,11 +56,11 @@
       "SALESFORCE INC",
       "SAP SE"
     ],
-
    
 
     "start_date": "2020-01-01",
-    "end_date": "2025-11-30"
+    "end_date": "2025-11-30",
+    "data_path": "data/ai_merged.csv"
   
 
   },
@@ -101,8 +101,8 @@
       "BLOCK INC"
     ],
     "start_date": "2016-01-01",
-    "end_date": "2018-12-31"
-
+    "end_date": "2018-12-31",
+    "data_path": "data/crypto_merged.csv"
 
   },
 
@@ -125,7 +125,8 @@
     "QUANTUMSCAPE CORP", "PROTERRA INC", "LION ELECTRIC CO", "ARRIVAL LTD"
   ],
    "start_date": "2017-01-01",
-   "end_date": "2022-12-31"
+   "end_date": "2022-12-31",
+   "data_path": "data/ev_merged.csv"
 
 
   },
@@ -252,7 +253,8 @@
     "Yahoo!", "theGlobe.com", "uBid"
   ],
   "start_date": "1998-01-01",
-  "end_date": "2000-03-31"
+  "end_date": "2000-03-31",
+  "data_path": "data/dotcom_merged.csv"
 
   }
 }

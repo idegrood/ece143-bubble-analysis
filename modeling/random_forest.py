@@ -147,8 +147,6 @@ class RandomForestRegressorModel:
         assert self.model is not None, \
             "Model must be trained before prediction"
 
-        self._validate_dataframe(df)
-
         X = df[self.feature_cols].values
 
         return self.model.predict(X)
