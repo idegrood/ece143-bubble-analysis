@@ -5,6 +5,7 @@ The 4 bubbles we looked at were dotcom, ev ...
 Code Summary: 
 
 bubble_data_collector.py : grabs stock data from wrds, returns pandas dataframe & makes csv file 
+
 bubble_config.json used as an input in bubble_data_collector.py
 
 bubble_plotting_updated.py : updated plotting of bubble data
