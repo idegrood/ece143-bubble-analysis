@@ -12,7 +12,6 @@ ece143-bubble-analysis/
 ├── bubble_data_collector.py    # Main data collection script (queries WRDS)
 ├── bubble_type.py              # Enum class for bubble type constants
 ├── bubble_plotting_updated.py  # Interactive plotting functions with Jupyter widgets
-├── plotting_bubble_data.py     # Static plotting scripts
 ├── data/                       # Generated CSV datasets
 │   ├── ai_merged.csv
 │   ├── crypto_merged.csv
@@ -33,7 +32,6 @@ ece143-bubble-analysis/
 
 **Visualization:**
 - `bubble_plotting_updated.py`: Interactive plotting functions with Jupyter notebook widgets for exploring bubble data
-- `plotting_bubble_data.py`: Static plotting scripts for bubble index and company-specific metrics
 
 **Modeling:**
 - `modeling/preprocess.py`: Preprocesses data, identifies bubble bounds (peak to 30% drawdown), calculates survival probabilities
@@ -102,16 +100,6 @@ import ipywidgets as widgets
 # Load data (can concatenate multiple bubbles)
 merged = pd.read_csv('data/ai_merged.csv')
 # Interactive widgets will appear - select bubble type and company from dropdowns
-```
-
-#### Static Plotting
-
-```python
-from plotting_bubble_data import plotting
-import pandas as pd
-
-merged = pd.read_csv('data/ev_merged.csv')
-plotting(merged)
 ```
 
 ### 3. Model Training & Prediction
