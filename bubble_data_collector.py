@@ -33,13 +33,17 @@ def load_bubble_config(config_path: str = "bubble_config.json") -> dict:
     dict
         Parsed configuration dictionary.
     """
+    assert isinstance(config_path, str), "Config Path must be a string."
+    assert config_path.endswith(".json"), "Config Path must be a JSON file."
+
     if not os.path.exists(config_path):
         raise FileNotFoundError(f"Config file not found: {config_path}")
 
     with open(config_path, "r") as f:
         config = json.load(f)
-
+    # ------------------------------------------------------------------ #
     # Basic sanity checks
+    # ------------------------------------------------------------------ #
     for bubble_type, cfg in config.items():
         if "keywords" not in cfg or "tickers" not in cfg or "names" not in cfg:
             raise ValueError(
@@ -71,6 +75,10 @@ def get_bubble_config(bubble_type: str, config: dict) -> dict:
     dict
         Config for the requested bubble with uppercase names.
     """
+    assert isinstance(bubble_type, str), "bubble_type must be a string."
+    assert isinstance(config, dict), "config must be a dictionary."
+    assert len(config) > 0, "config dictionary cannot be empty."
+
     if bubble_type not in config:
         raise KeyError(f"Unknown bubble type: {bubble_type}")
 
@@ -109,9 +117,20 @@ def build_bubble_panel(
     pandas.DataFrame
         Merged CRSP+Compustat panel including valuation metrics and bubble_index.
     """
-    # Load config if not provided
-    if config is None:
+    assert isinstance(bubble_type, str), "bubble_type must be a string."
+    assert len(bubble_type) > 0, "bubble_type cannot be empty."
+
+    if db is not None:
+        assert isinstance(db, wrds.Connection), "db must be a WRDS connection."
+    else:
+        db = wrds.Connection()
+
+    if config is not None:
+        assert isinstance(config, dict), "config must be a dict."
+    else:
         config = load_bubble_config()
+   
+    assert isinstance(start_date, str), "start_date must be a string."
 
     cfg = get_bubble_config(bubble_type, config)
     keywords = cfg["keywords"]
@@ -123,11 +142,10 @@ def build_bubble_panel(
             f"Config for '{bubble_type}' must have non-empty keywords, tickers, and names."
         )
 
-    # WRDS connection
-    if db is None:
-        db = wrds.Connection()
+    assert isinstance(keywords, list) and len(keywords) > 0, "keywords must be a non-empty list."
+    assert isinstance(tickers, list) and len(tickers) > 0, "tickers must be a non-empty list."
+    assert isinstance(names, list) and len(names) > 0, "names must be a non-empty list."       
 
-    # 1) Compustat name search
     pattern = "|".join(keywords)
 
     sql_universe = f"""
@@ -140,28 +158,21 @@ def build_bubble_panel(
     print(f"{bubble_type} initial matches:")
     print(firm_list.head())
 
-    # 2) Link to CRSP
     link = db.get_table(
         library="crsp",
         table="ccmxpf_linktable",
         columns=["gvkey", "lpermno", "linktype", "linkprim"],
     )
 
- 
-
-
     link = link[
         (link["linktype"].isin(["LC", "LU"])) &
         (link["linkprim"].isin(["P", "C", "S"]))
     ][["gvkey", "lpermno"]].drop_duplicates().rename(columns={"lpermno": "permno"})
 
-   
-
     firm_list = firm_list.merge(link, on="gvkey", how="left")
     firm_list = firm_list.dropna(subset=["permno"]).copy()
     firm_list["permno"] = firm_list["permno"].astype(int)
 
-    # 3) Curated filter (this is what really defines your universe)
     name_pattern = "|".join([n.upper().replace(".", r"\.").replace(",", r"\,") for n in names])
     print(tickers)
     print(name_pattern)
@@ -176,9 +187,6 @@ def build_bubble_panel(
     print(f"\nFiltered {bubble_type} firms (curated):")
     print(firm_list)
 
-
-
-    # 4) CRSP daily
     permnos = firm_list["permno"].tolist()
     permnos_str = ",".join(map(str, permnos))
 
@@ -195,15 +203,12 @@ def build_bubble_panel(
     crsp = db.raw_sql(sql_crsp)
     crsp["date"] = pd.to_datetime(crsp["date"])
     crsp["prc"] = crsp["prc"].abs()
-    # NOTE: shrout is in thousands of shares in CRSP; multiply by 1000 if you want true $ mktcap
     crsp["mktcap"] = crsp["prc"] * crsp["shrout"]
 
     name_map = firm_list.set_index("permno")["conm"].to_dict()
     ticker_map = firm_list.set_index("permno")["tic"].to_dict()
     crsp["conm"] = crsp["permno"].map(name_map)
     crsp["tic"] = crsp["permno"].map(ticker_map)
-
-    # 5) Fundamentals
     gvkeys = firm_list["gvkey"].tolist()
     gvkey_sql_list = ",".join(f"'{x}'" for x in gvkeys)
 
@@ -231,7 +236,9 @@ def build_bubble_panel(
 
     merged = merged.drop_duplicates(subset=["permno", "date"]).reset_index(drop=True)
 
-    # 6) Valuation metrics and bubble_index
+    # ------------------------------------------------------------------ #
+    # Valuation and Bubble Index
+    # ------------------------------------------------------------------ #
     merged["ps"] = merged["mktcap"] / merged["saleq"]
     merged["pb"] = merged["mktcap"] / merged["ceqq"]
     merged["pe"] = merged["mktcap"] / merged["niq"]
@@ -249,11 +256,9 @@ def build_bubble_panel(
 
     return merged
 
-
-# ------------------------------
-# Batch generator for all bubbles
-# ------------------------------
-
+# ------------------------------------
+# BATCH generator for all bubbles
+# ------------------------------------
 def generate_all_bubble_csvs(
     config_path: str = "bubble_config.json",
     output_dir: str = "data",
@@ -267,6 +272,15 @@ def generate_all_bubble_csvs(
         1. Builds the merged CRSP+Compustat panel via build_bubble_panel().
         2. Saves the result as <bubble_type>_merged.csv in output_dir.
     """
+    assert isinstance(config_path, str), "config_path must be a string."
+    assert isinstance(output_dir, str), "output_dir must be a string."
+
+    assert isinstance(start_date, str), "start_date must be a string."
+    try:
+        pd.to_datetime(start_date)
+    except:
+        raise AssertionError("start_date must be valid YYYY-MM-DD format.")
+    
     config = load_bubble_config(config_path)
     db = wrds.Connection()
 
@@ -310,9 +324,6 @@ if __name__ == "__main__":
     generate_all_bubble_csvs(
         config_path="bubble_config.json",
         output_dir="data",
-        start_date="1995-01-01",
-  
-
-
+        start_date="1995-01-01"
     )
     print("\n[ALL DONE] Bubble datasets generated.")
