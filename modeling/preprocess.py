@@ -70,6 +70,7 @@ class Preprocessor:
             t_start, t_end = df["quarter"].min(), df["quarter"].max()
 
         print(f"===========:{bubble_type} Bubble window: ===========")
+        print(f"Start → {pd.to_datetime(bubble_params['start_date']).to_period("Q")}")
         print(f"Peak → {t_start}")
         print(f"End  → {t_end}")
 
