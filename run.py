@@ -1,5 +1,5 @@
-from preprocess import Preprocessor
-from random_forest import RandomForestRegressorModel
+from modeling.preprocess import Preprocessor
+from modeling.random_forest import RandomForestRegressorModel
 from bubble_type import BUBBLE_TYPE
 import pandas as pd
 import numpy as np
