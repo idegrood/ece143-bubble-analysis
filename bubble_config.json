@@ -137,7 +137,7 @@
     "Akamai",           
     "Amazon",          
     "InfoSpace",        
-    "Cisco.*Sys",       
+    "Cisco",       
     "eGain",            
     "Intel Corp",     
     "Microsoft",        
@@ -252,8 +252,8 @@
     "Verio", "VerticalNet", "Vignette Corporation", "Webvan", "World Online", 
     "Yahoo!", "theGlobe.com", "uBid"
   ],
-  "start_date": "1998-01-01",
-  "end_date": "2000-03-31",
+  "start_date": "1995-01-01",
+  "end_date": "2001-12-31",
   "data_path": "data/dotcom_merged.csv"
 
   }
