@@ -2,9 +2,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import glob
 import numpy as np
-import ipywidgets as widgets
-from ipywidgets import interact
-import plotly.graph_objects as go
+
+# Try to import widgets; Colab only
+try:
+    import ipywidgets as widgets
+    from ipywidgets import interact
+    IN_INTERACTIVE_ENV = True
+except ImportError:
+    IN_INTERACTIVE_ENV = False
 
 # ------------------------------
 # Line plot function
@@ -92,14 +97,10 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
     print(f"Company: {company_name}")
 
 
-
-
-
 # ------------------------------
-# Self-executing block
+# Self-executing block (Colab)
 # ------------------------------
-if __name__ == "__main__":
-    # Load CSVs
+if __name__ == "__main__" and IN_INTERACTIVE_ENV:
     data_dir = "data"
     csv_files = glob.glob(f"{data_dir}/*_merged.csv")
     assert csv_files, f"No CSV files found in {data_dir}"
@@ -113,11 +114,8 @@ if __name__ == "__main__":
     merged = pd.concat(merged_list, ignore_index=True)
     assert not merged.empty, "Merged DataFrame is empty"
 
-    # ------------------------------
-    # Widgets for line plots
-    # ------------------------------
     def get_companies(df, bubble):
-        return ['All companies'] + sorted(df[df['bubble_type']==bubble]['tic'].dropna().unique().tolist())
+        return ['All companies'] + sorted(df[df['bubble_type']==bubble]['tic'].dropna().tolist())
 
     initial_bubble = merged['bubble_type'].unique()[0]
     bubble_dropdown = widgets.Dropdown(options=merged['bubble_type'].unique(), description='Bubble:', value=initial_bubble)
@@ -127,8 +125,6 @@ if __name__ == "__main__":
         new_bubble = change['new']
         company_dropdown.options = get_companies(merged, new_bubble)
         company_dropdown.value = 'All companies'
+
     bubble_dropdown.observe(update_company_options, names='value')
-
     interact(plot_bubble_interactive, merged=widgets.fixed(merged), bubble_type=bubble_dropdown, company=company_dropdown)
-
-  
