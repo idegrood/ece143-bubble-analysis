@@ -48,14 +48,23 @@ The following third-party Python packages are required:
 - **pandas**: Data manipulation and analysis
 - **numpy**: Numerical computing
 - **matplotlib**: Plotting and visualization
+- **plotly**: Interactive plotting and visualization
 - **scikit-learn**: Machine learning (RandomForestRegressor, metrics)
 - **wrds**: WRDS Python API for accessing CRSP and Compustat databases
 - **ipywidgets**: Interactive widgets for Jupyter notebooks
 
 ### Installation
 
+Install all required packages using pip:
+
 ```bash
-pip install pandas numpy matplotlib scikit-learn wrds ipywidgets
+pip install -r requirements.txt
+```
+
+Or install individually:
+
+```bash
+pip install pandas numpy matplotlib plotly scikit-learn wrds ipywidgets
 ```
 
 **Note:** The `wrds` package requires an active WRDS subscription with access to CRSP and Compustat databases. You must create an account at [wrds.wharton.upenn.edu](https://wrds.wharton.upenn.edu). First-time users will be prompted for WRDS username and password when running the data collection script.
