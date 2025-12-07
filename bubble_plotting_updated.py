@@ -11,6 +11,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def plot_bubble_interactive(merged, bubble_type, company='All companies'):
+    assert isinstance(merged, pd.DataFrame), "merged must be a pandas DataFrame"
+    assert not merged.empty, "merged DataFrame cannot be empty"
+    assert 'bubble_type' in merged.columns, "merged must contain 'bubble_type' column"
+    assert 'date' in merged.columns, "merged must contain 'date' column"
+    assert isinstance(bubble_type, str), "bubble_type must be a string"
+    assert isinstance(company, str), "company must be a string"
+    
     # Filter by bubble
     df = merged[merged['bubble_type'] == bubble_type].copy()
 
@@ -38,6 +45,12 @@ def plot_bubble_interactive(merged, bubble_type, company='All companies'):
     # ------------------------------
     # Plot for specific company
     # ------------------------------
+    assert 'tic' in merged.columns, "merged must contain 'tic' column"
+    assert 'conm' in merged.columns, "merged must contain 'conm' column"
+    assert 'prc' in merged.columns, "merged must contain 'prc' column"
+    assert 'saleq' in merged.columns, "merged must contain 'saleq' column"
+    assert 'mktcap' in merged.columns, "merged must contain 'mktcap' column"
+    
     comp_df = df[df['tic'] == company].sort_values('date')
     if comp_df.empty:
         print(f"No data for company {company} in bubble {bubble_type}")
@@ -85,6 +98,11 @@ bubble_dropdown = widgets.Dropdown(
 
 # Company dropdown
 def get_companies_for_bubble(df, bubble):
+    assert isinstance(df, pd.DataFrame), "df must be a pandas DataFrame"
+    assert 'bubble_type' in df.columns, "df must contain 'bubble_type' column"
+    assert 'tic' in df.columns, "df must contain 'tic' column"
+    assert isinstance(bubble, str), "bubble must be a string"
+    
     df_b = df[df['bubble_type'] == bubble]
     companies = ['All companies'] + sorted(df_b['tic'].dropna().unique().tolist())
     return companies

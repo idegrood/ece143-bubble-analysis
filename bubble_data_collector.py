@@ -71,6 +71,10 @@ def get_bubble_config(bubble_type: str, config: dict) -> dict:
     dict
         Config for the requested bubble with uppercase names.
     """
+    assert isinstance(bubble_type, str) and bubble_type, "bubble_type must be a non-empty string"
+    assert isinstance(config, dict), "config must be a dictionary"
+    assert len(config) > 0, "config dictionary cannot be empty"
+    
     if bubble_type not in config:
         raise KeyError(f"Unknown bubble type: {bubble_type}")
 
@@ -109,6 +113,11 @@ def build_bubble_panel(
     pandas.DataFrame
         Merged CRSP+Compustat panel including valuation metrics and bubble_index.
     """
+    assert isinstance(bubble_type, str) and bubble_type, "bubble_type must be a non-empty string"
+    assert isinstance(start_date, str) and start_date, "start_date must be a non-empty string"
+    if end_date is not None:
+        assert isinstance(end_date, str) and end_date, "end_date must be a non-empty string if provided"
+    
     # Load config if not provided
     if config is None:
         config = load_bubble_config()
@@ -267,6 +276,10 @@ def generate_all_bubble_csvs(
         1. Builds the merged CRSP+Compustat panel via build_bubble_panel().
         2. Saves the result as <bubble_type>_merged.csv in output_dir.
     """
+    assert isinstance(config_path, str) and config_path, "config_path must be a non-empty string"
+    assert isinstance(output_dir, str) and output_dir, "output_dir must be a non-empty string"
+    assert isinstance(start_date, str) and start_date, "start_date must be a non-empty string"
+    
     config = load_bubble_config(config_path)
     db = wrds.Connection()
 

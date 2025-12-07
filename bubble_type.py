@@ -20,4 +20,5 @@ class BUBBLE_TYPE(Enum):
 
     @classmethod
     def from_str(cls, value: str) -> "BUBBLE_TYPE":
+        assert isinstance(value, str) and value, "value must be a non-empty string"
         return cls(value.lower())

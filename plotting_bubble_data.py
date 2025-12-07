@@ -3,8 +3,18 @@
 #RELIES ON bubble_data_collection_cvs_function.py
 
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def plotting(merged):
+    assert isinstance(merged, pd.DataFrame), "merged must be a pandas DataFrame"
+    assert not merged.empty, "merged DataFrame cannot be empty"
+    assert 'date' in merged.columns, "merged must contain 'date' column"
+    assert 'bubble_index' in merged.columns, "merged must contain 'bubble_index' column"
+    assert 'tic' in merged.columns, "merged must contain 'tic' column"
+    assert 'prc' in merged.columns, "merged must contain 'prc' column"
+    assert 'saleq' in merged.columns, "merged must contain 'saleq' column"
+    assert 'mktcap' in merged.columns, "merged must contain 'mktcap' column"
+    
     ts = merged.groupby("date")["bubble_index"].mean()
 
     plt.figure(figsize=(12,5))

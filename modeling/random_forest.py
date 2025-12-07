@@ -50,6 +50,13 @@ class RandomForestRegressorModel:
         random_state : int
             Random seed for reproducibility of results.
         """
+        assert isinstance(feature_cols, list), "feature_cols must be a list"
+        assert len(feature_cols) > 0, "feature_cols cannot be empty"
+        assert all(isinstance(col, str) for col in feature_cols), "All feature_cols must be strings"
+        assert isinstance(target_col, str) and target_col, "target_col must be a non-empty string"
+        assert target_col not in feature_cols, "target_col cannot be in feature_cols"
+        assert isinstance(random_state, int), "random_state must be an integer"
+        
         self.feature_cols = feature_cols
         self.target_col = target_col
         self.random_state = random_state
