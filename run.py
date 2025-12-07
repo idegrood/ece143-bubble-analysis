@@ -106,6 +106,11 @@ def main():
     - Trains a RandomForestRegressorModel
     - Runs predictions and prints feature importances + results
     """
+    pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.width', None)
+    pd.set_option('display.max_colwidth', None)
+    
     feature_cols = ['prc', 'mktcap', 'ps', 'pb', 'pe', 'ev', 'ev_sales', 'ps_z', 'pb_z', 'ev_sales_z']
     target_col = 'survival_prob'
 
