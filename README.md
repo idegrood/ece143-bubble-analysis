@@ -60,7 +60,7 @@ The following third-party Python packages are required:
 pip install pandas numpy matplotlib scikit-learn wrds ipywidgets
 ```
 
-**Note:** WRDS access requires an active subscription. First-time users will be prompted for WRDS username and password when running the data collection script.
+**Note:** The `wrds` package requires an active WRDS subscription with access to CRSP and Compustat databases. You must create an account at [wrds.wharton.upenn.edu](https://wrds.wharton.upenn.edu). First-time users will be prompted for WRDS username and password when running the data collection script.
 
 ## How to Run
 
@@ -71,6 +71,12 @@ Collect data for all bubbles defined in `bubble_config.json`:
 ```bash
 python bubble_data_collector.py
 ```
+
+**⚠️ WRDS Account Required:** Running the data collector requires an active WRDS (Wharton Research Data Services) account and subscription. You will need to:
+1. Create an account at [wrds.wharton.upenn.edu](https://wrds.wharton.upenn.edu)
+2. Sign in when prompted by the script
+
+**Note:** Pre-generated datasets for all bubbles are already available in the `data/` directory, so you can skip data collection and proceed directly to visualization or modeling if you don't have WRDS access.
 
 This script:
 - Connects to WRDS
