@@ -26,13 +26,16 @@ ece143-bubble-analysis/
 
 ### File Descriptions
 
+**Main Interface:**
+- `data_visualization.ipynb `: An interface to run data collection, creation, visualization consisting of heatmaps and linegraphs and modeling through random forest.
+
 **Core Scripts:**
 - `bubble_data_collector.py`: Collects daily stock prices (CRSP) and quarterly fundamentals (Compustat) from WRDS, merges data, calculates valuation metrics and bubble indices
 - `bubble_type.py`: Enum class defining bubble types (AI, CRYPTO, EV, DOTCOM)
 - `bubble_config.json`: JSON configuration file with company keywords, tickers, names, date ranges, and data paths for each bubble type
 
 **Visualization:**
-- `bubble_plotting_updated.py`: Interactive plotting functions with Jupyter notebook widgets for exploring bubble data
+- `bubble_plotting_interactive.py`: Interactive plotting functions with Jupyter notebook widgets for exploring bubble data
 
 **Modeling:**
 - `modeling/preprocess.py`: Preprocesses data, identifies bubble bounds (peak to 30% drawdown), calculates survival probabilities
