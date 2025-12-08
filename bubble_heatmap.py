@@ -1,11 +1,10 @@
-
 import pandas as pd
 import glob
 import numpy as np
 import plotly.graph_objects as go
 
 # ------------------------------
-# Heatmap function (no Kaleido)
+# Interactive Heatmap function
 # ------------------------------
 def plot_interactive_bubble_heatmap(merged: pd.DataFrame):
     """
@@ -18,35 +17,38 @@ def plot_interactive_bubble_heatmap(merged: pd.DataFrame):
     bubble_types = merged['bubble_type'].unique()
     fig = go.Figure()
 
-    # Add a heatmap trace for each bubble type
+    # ------------------------------
+    # Add traces per bubble
+    # ------------------------------
     for i, bubble in enumerate(bubble_types):
         df_bubble = merged[merged['bubble_type']==bubble].copy()
         pivot = df_bubble.pivot_table(index='tic', columns='date', values='bubble_index', fill_value=0)
-        pivot = pivot.sort_index()
+
         z = pivot.values.astype(float)
         zmin_val = 0
         zmax_val = max(np.nanmax(z) if not np.isnan(np.nanmax(z)) else 0, 2.0)
 
+        # Original color scheme
         colorscale = [
             [0.0, 'rgb(255,255,255)'],
-            [2.0 / zmax_val, 'rgb(0,0,180)'],
-            [1.0, 'rgb(255,0,0)']
+            [2.0 / zmax_val, 'rgb(0,0,180)']
         ]
+        if zmax_val > 2.0:
+            colorscale.append([2.0 / zmax_val, 'rgb(255,0,0)'])
+            colorscale.append([1.0, 'rgb(139,0,0)'])
+        else:
+            colorscale.append([1.0, 'rgb(255,0,0)'])
 
         fig.add_trace(go.Heatmap(
-            z=z,
-            x=pivot.columns,
-            y=pivot.index,
-            visible=(i==0),
-            colorscale=colorscale,
-            zmin=zmin_val,
-            zmax=zmax_val,
-            text=z,
-            texttemplate="%{text:.2f}",
+            z=z, x=pivot.columns, y=pivot.index, visible=(i==0),
+            colorscale=colorscale, zmin=zmin_val, zmax=zmax_val,
+            text=z, texttemplate="%{text:.2f}",
             hovertemplate="Company: %{y}<br>Date: %{x}<br>Bubble Index: %{z:.2f}<extra></extra>"
         ))
 
-    # Create buttons to switch between bubble types
+    # ------------------------------
+    # Buttons to switch bubble
+    # ------------------------------
     buttons = []
     for i, bubble in enumerate(bubble_types):
         buttons.append(dict(
@@ -59,12 +61,11 @@ def plot_interactive_bubble_heatmap(merged: pd.DataFrame):
     fig.update_layout(
         updatemenus=[dict(active=0, buttons=buttons, x=0.1, y=1.15, xanchor='left', yanchor='top')],
         title=f"Bubble Index Heatmap: {bubble_types[0]}",
-        xaxis_title="Date",
-        yaxis_title="Company",
+        xaxis_title="Date", yaxis_title="Company",
         template="plotly_white"
     )
 
-    fig.show()  # Only show, no image export needed
+    fig.show()
 
 # ------------------------------
 # Self-executing block
@@ -84,5 +85,4 @@ if __name__ == "__main__":
     assert not merged.empty, "Merged DataFrame is empty"
 
     plot_interactive_bubble_heatmap(merged)
-
 
