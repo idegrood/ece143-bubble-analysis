@@ -3,7 +3,7 @@ import pandas as pd
 import glob
 import numpy as np
 import os
-
+from IPython.display import Image, display
 # Try to import widgets; Colab only
 try:
     import ipywidgets as widgets
@@ -58,6 +58,7 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
         plt.show()
 
         save_png(fig, f"{bubble_type}_all_companies")
+        display(Image(filename=os.path.join(SAVE_DIR, f"{bubble_type}_all_companies.png")))
         return
 
     # ------------------------------
@@ -81,6 +82,7 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
     plt.show()
 
     save_png(fig, f"{bubble_type}_{company}_price")
+    display(Image(filename=os.path.join(SAVE_DIR, f"{bubble_type}_{company}_price.png")))
 
     # ---- Sales ----
     fig = plt.figure(figsize=(12,5))
@@ -92,6 +94,7 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
     plt.show()
 
     save_png(fig, f"{bubble_type}_{company}_sales")
+    display(Image(filename=os.path.join(SAVE_DIR, f"{bubble_type}_{company}_sales.png")))
 
     # ---- Combined ----
     fig = plt.figure(figsize=(12,5))
@@ -105,6 +108,7 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
     plt.show()
 
     save_png(fig, f"{bubble_type}_{company}_combined")
+    display(Image(filename=os.path.join(SAVE_DIR, f"{bubble_type}_{company}_combined.png")))
 
     # ---- P/S Ratio ----
     comp_df['ps_ratio'] = comp_df['mktcap'] / comp_df['saleq_interp']
@@ -124,6 +128,7 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
     plt.show()
 
     save_png(fig, f"{bubble_type}_{company}_psratio")
+    display(Image(filename=os.path.join(SAVE_DIR, f"{bubble_type}_{company}_psratio.png")))
 
     print(f"Company: {company_name}")
 
