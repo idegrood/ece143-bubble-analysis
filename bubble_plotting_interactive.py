@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import glob
 import numpy as np
+import os
 
 # Try to import widgets; Colab only
 try:
@@ -11,13 +12,24 @@ try:
 except ImportError:
     IN_INTERACTIVE_ENV = False
 
+
+# ---------------------------------------
+# Helper: Save every figure as PNG for GitHub
+# ---------------------------------------
+SAVE_DIR = "static_plots"
+os.makedirs(SAVE_DIR, exist_ok=True)
+
+def save_png(fig, name):
+    """Save PNG for GitHub viewing."""
+    path = os.path.join(SAVE_DIR, f"{name}.png")
+    fig.savefig(path, dpi=150, bbox_inches='tight')
+    print(f"[Saved PNG] {path}")
+
+
 # ------------------------------
 # Line plot function
 # ------------------------------
 def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str = 'All companies'):
-    """
-    Interactive plotting of bubble analysis for companies.
-    """
     required_columns = ['date', 'tic', 'conm', 'bubble_type', 'bubble_index', 'prc', 'saleq', 'mktcap']
     for col in required_columns:
         assert col in merged.columns, f"merged must contain column '{col}'"
@@ -27,10 +39,13 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
         print(f"No data for bubble {bubble_type}")
         return
 
+    # ------------------------------
+    # All companies
+    # ------------------------------
     if company == 'All companies':
         ts = df.groupby('date')['bubble_index'].max()
         ts_m = df.groupby('date')['bubble_index'].mean()
-        plt.figure(figsize=(12,5))
+        fig = plt.figure(figsize=(12,5))
         plt.plot(ts,  label=f"{bubble_type.upper()} Bubble Index (max)")
         plt.plot(ts_m,  label=f"{bubble_type.upper()} Bubble Index (mean)")
         plt.axhline(0, linestyle='--')
@@ -41,17 +56,23 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
         plt.legend()
         plt.grid(True)
         plt.show()
+
+        save_png(fig, f"{bubble_type}_all_companies")
         return
 
+    # ------------------------------
+    # Individual company
+    # ------------------------------
     comp_df = df[df['tic'] == company].sort_values('date')
     if comp_df.empty:
         print(f"No data for company {company} in bubble {bubble_type}")
         return
+
     company_name = comp_df['conm'].iloc[0]
     comp_df['saleq_interp'] = comp_df['saleq'].interpolate(method='linear')
 
-    # Price-only
-    plt.figure(figsize=(12,5))
+    # ---- Price ----
+    fig = plt.figure(figsize=(12,5))
     plt.plot(comp_df['date'], comp_df['prc'], linewidth=2)
     plt.title(f"{company_name}: Price Over Time")
     plt.xlabel("Date")
@@ -59,8 +80,10 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
     plt.grid(True)
     plt.show()
 
-    # Sales-only
-    plt.figure(figsize=(12,5))
+    save_png(fig, f"{bubble_type}_{company}_price")
+
+    # ---- Sales ----
+    fig = plt.figure(figsize=(12,5))
     plt.plot(comp_df['date'], comp_df['saleq_interp'], linewidth=2)
     plt.title(f"{company_name}: Sales (Interpolated) Over Time")
     plt.xlabel("Date")
@@ -68,8 +91,10 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
     plt.grid(True)
     plt.show()
 
-    # Combined
-    plt.figure(figsize=(12,5))
+    save_png(fig, f"{bubble_type}_{company}_sales")
+
+    # ---- Combined ----
+    fig = plt.figure(figsize=(12,5))
     plt.plot(comp_df['date'], comp_df['prc'], label='Price', linewidth=2)
     plt.plot(comp_df['date'], comp_df['saleq_interp'], label='Sales (Interpolated)', linewidth=2)
     plt.title(f"{company_name}: Price vs Sales")
@@ -79,11 +104,14 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
     plt.grid(True)
     plt.show()
 
-    # P/S ratio
+    save_png(fig, f"{bubble_type}_{company}_combined")
+
+    # ---- P/S Ratio ----
     comp_df['ps_ratio'] = comp_df['mktcap'] / comp_df['saleq_interp']
     comp_df['ps_ratio'] = comp_df['ps_ratio'].replace([np.inf, -np.inf], np.nan)
     threshold = np.nanmean(comp_df['ps_ratio']) + 2*np.nanstd(comp_df['ps_ratio'])
-    plt.figure(figsize=(12,5))
+
+    fig = plt.figure(figsize=(12,5))
     plt.plot(comp_df['date'], comp_df['ps_ratio'], label='P/S Ratio', linewidth=2)
     plt.axhline(threshold, color='red', linestyle='--', label='Z=2 Threshold')
     ymin, ymax = plt.ylim()
@@ -94,6 +122,9 @@ def plot_bubble_interactive(merged: pd.DataFrame, bubble_type: str, company: str
     plt.legend()
     plt.grid(True)
     plt.show()
+
+    save_png(fig, f"{bubble_type}_{company}_psratio")
+
     print(f"Company: {company_name}")
 
 
