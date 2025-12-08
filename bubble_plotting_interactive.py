@@ -210,9 +210,6 @@ def create_dashboard(merged, config):
     )
 
 
-# ---------------------------------------------------------
-# Run dashboard
-# ---------------------------------------------------------
 if __name__ == "__main__":
     merged = load_merged_data("data")
     config = load_bubble_config("bubble_config.json")

@@ -77,11 +77,9 @@ def plot_interactive_bubble_heatmap(merged: pd.DataFrame):
     return fig
 
 
-# ------------------------------
-# Run automatically if file is executed
-# ------------------------------
+
 if __name__ == "__main__":
-    # Load CSV files from "data" folder
+    
     data_dir = "data"
     csv_files = glob.glob(f"{data_dir}/*_merged.csv")
     if not csv_files:
@@ -95,7 +93,7 @@ if __name__ == "__main__":
         merged_list.append(df)
     merged = pd.concat(merged_list, ignore_index=True)
 
-    # Generate and show heatmap
+    
     fig = plot_interactive_bubble_heatmap(merged)
     fig.show()
 
