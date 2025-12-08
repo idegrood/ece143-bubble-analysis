@@ -12,6 +12,7 @@ ece143-bubble-analysis/
 ├── bubble_data_collector.py    # Main data collection script (queries WRDS)
 ├── bubble_type.py              # Enum class for bubble type constants
 ├── bubble_plotting_updated.py  # Interactive plotting functions with Jupyter widgets
+├── data_visualization.ipynb    # Data Generation, visualization plots and data modeling
 ├── data/                       # Generated CSV datasets
 │   ├── ai_merged.csv
 │   ├── crypto_merged.csv
